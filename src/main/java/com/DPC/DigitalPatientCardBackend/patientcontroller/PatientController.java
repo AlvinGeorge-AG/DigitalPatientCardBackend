@@ -1,0 +1,137 @@
+package com.DPC.DigitalPatientCardBackend.patientcontroller;
+
+import com.DPC.DigitalPatientCardBackend.patient.Disease;
+import com.DPC.DigitalPatientCardBackend.repository.PatientRepository;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.DPC.DigitalPatientCardBackend.patient.Patient;
+import java.time.LocalDate;
+
+import java.time.format.DateTimeFormatter;
+
+@RestController
+@RequestMapping("/patient")
+public class PatientController {
+
+    private final PatientRepository patientRepository;
+
+    public PatientController(PatientRepository patientRepository) {
+        this.patientRepository = patientRepository;
+    }
+
+
+
+    @GetMapping("/register")
+    public ResponseEntity<?> register(HttpSession session){
+        if(session.getAttribute("username")==null){
+            return ResponseEntity.ok("Success");
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Patient Already Logged In Please Logout First!") ;
+    }
+
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerpatient(@RequestBody Patient patient){
+        String username=patient.getUsername();
+        if(patientRepository.findByUsername(username)==null){
+            patientRepository.save(patient);
+            return ResponseEntity.ok("Patient registered successfully");
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Patient already exists");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginverify(@RequestParam String username, @RequestParam String password, HttpSession session){
+        if(session.getAttribute("username")==null) {
+            Patient patient = patientRepository.findByUsername(username);
+            if (patient != null && username.equals(patient.getUsername()) && password.equals(patient.getPassword())) {
+                session.setAttribute("username", patient.getUsername());
+                return ResponseEntity.ok().body("Login Successful");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password/Patient Don't Exist!");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Patient Already Logged in!");
+        }
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<?> dash(HttpSession session){
+        if(session.getAttribute("username")==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Please Login");
+        }
+        String username = (String) session.getAttribute("username");
+        Patient patient = patientRepository.findByUsername(username);
+        return ResponseEntity.ok(patient);
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        if(session.getAttribute("username")!=null){
+            session.invalidate();
+            return ResponseEntity.ok("Logged out successfully");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please Login");
+    }
+
+
+    //Patient Specific Controllers
+    @PostMapping("/adddisease")
+    public ResponseEntity<?> addDisease(@RequestParam String description, HttpSession session) {
+        if (session.getAttribute("username") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please login first");
+        }
+        if (description.isBlank() || description.length() < 3) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid description");
+        }
+        Patient patient = patientRepository.findByUsername(session.getAttribute("username").toString());
+        if (patient != null) {
+            LocalDate now = LocalDate.now();
+            String formattedDate = now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            patient.getDiseases().add(new Disease(description, formattedDate));
+            patientRepository.save(patient);
+            return ResponseEntity.ok("Disease added successfully");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
+    }
+
+    @GetMapping("/update-profile")
+    public ResponseEntity<String> updateProfile(HttpSession session){
+        if(session.getAttribute("username")==null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please login");
+        }
+        return ResponseEntity.ok("success");
+    }
+
+    @PostMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(@RequestBody Patient patient, HttpSession session){
+        if(session.getAttribute("username")==null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please login");
+        }
+        Patient existingPatient = patientRepository.findByUsername(session.getAttribute("username").toString());
+        existingPatient.setGender(patient.getGender());
+        existingPatient.setHeight(patient.getHeight());
+        existingPatient.setWeight(patient.getWeight());
+        existingPatient.setBloodgroup(patient.getBloodgroup());
+        existingPatient.setBloodpressure(patient.getBloodpressure());
+        existingPatient.setSugar(patient.getSugar());
+        existingPatient.setSmoking(patient.isSmoking());
+        existingPatient.setAge(patient.getAge());
+        existingPatient.setAllergies(patient.getAllergies().toString());
+        existingPatient.setPastconditions(patient.getPastconditions().toString());
+        patientRepository.save(existingPatient);
+        return ResponseEntity.ok("Patient updated successfully");
+    }
+
+    @GetMapping("/dpc")
+    public ResponseEntity<?> dpc(HttpSession session){
+        String username = (String) session.getAttribute("username");
+        if(username==null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please login");
+        }
+        Patient patient = patientRepository.findByUsername(username);
+        return ResponseEntity.ok(patient);
+    }
+}
