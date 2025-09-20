@@ -59,9 +59,9 @@
 - `username`: Unique identifier (String, required)
 - `password`: Plain text password (String, required)
 - `name`: Full patient name (String, required)
-- `address`:Patient Address in String
-- `email`:Email of the Patient
-- `phoneNumber`:PhoneNumber of the Patient
+- `address`:Patient Address (String, required)
+- `email`:Email of the Patient (String, required)
+- `phoneNumber`:PhoneNumber of the Patient (String, required)
 
 
 **Response**:
