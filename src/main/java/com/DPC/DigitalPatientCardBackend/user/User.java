@@ -1,7 +1,9 @@
 package com.DPC.DigitalPatientCardBackend.user;
 
 
+import jakarta.persistence.MappedSuperclass;
 
+@MappedSuperclass
 public class User {
     protected String name;
     protected String username;
@@ -50,7 +52,7 @@ public class User {
 
     public String getGender() { return gender; }
     public void setGender(String gender) {
-        if(gender.equals("male")||gender.equals("female")) {
+        if(gender!=null && (gender.equals("male")|| gender.equals("female"))) {
             this.gender = gender;
         }
     }

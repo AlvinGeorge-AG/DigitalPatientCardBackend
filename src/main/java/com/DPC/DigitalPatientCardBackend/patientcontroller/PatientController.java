@@ -46,7 +46,10 @@ public class PatientController {
     public ResponseEntity<?> loginverify(@RequestParam String username, @RequestParam String password, HttpSession session){
         if(session.getAttribute("username")==null) {
             Patient patient = patientRepository.findByUsername(username);
-            if (patient != null && username.equals(patient.getUsername()) && password.equals(patient.getPassword())) {
+            if(patient==null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("patient not found");
+            };
+            if (username.equals(patient.getUsername()) && password.equals(patient.getPassword())) {
                 session.setAttribute("username", patient.getUsername());
                 return ResponseEntity.ok().body("Login Successful");
             } else {

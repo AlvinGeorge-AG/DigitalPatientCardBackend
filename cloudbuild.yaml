@@ -1,0 +1,33 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/digital-patient-card/dpc-repo/DigitalPatientCardBackend:$SHORT_SHA'
+      - '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/digital-patient-card/dpc-repo/DigitalPatientCardBackend:$SHORT_SHA'
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        gcloud run deploy dpc-backend \
+          --image "asia-south1-docker.pkg.dev/digital-patient-card/dpc-repo/DigitalPatientCardBackend:$SHORT_SHA" \
+          --region asia-south1 \
+          --platform managed \
+          --allow-unauthenticated \
+          --memory=256Mi \
+          --cpu=0.25 \
+          --max-instances=1
+
+images:
+  - 'asia-south1-docker.pkg.dev/digital-patient-card/dpc-repo/DigitalPatientCardBackend:$SHORT_SHA'
+
+substitutions:
+  _IMAGE_NAME: 'DigitalPatientCardBackend'
+  _SERVICE_NAME: 'dpc-backend'

@@ -408,7 +408,7 @@
 - **200 OK**: Returns complete doctor object
   ```json
   {
-    "id": "doctor123",
+    "id": "",
     "username": "dr_smith",
     "name": "John Smith",
     "specialization": "Cardiology",

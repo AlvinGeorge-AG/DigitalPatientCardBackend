@@ -95,7 +95,7 @@ public class DoctorController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verify(HttpSession session,@RequestParam String patientId,@RequestParam String diseaseid){
+    public ResponseEntity<?> verify(HttpSession session,@RequestParam Long patientId,@RequestParam String diseaseid){
         if(session.getAttribute("username")!=null){
             Patient patient = patientRepository.findPatientById(patientId);
             if(patient!=null){

@@ -2,11 +2,15 @@ package com.DPC.DigitalPatientCardBackend.doctor;
 
 
 import com.DPC.DigitalPatientCardBackend.user.User;
+import jakarta.persistence.*;
 
-
+@Entity
+@Table(name = "doctors")
 public class Doctor extends User {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String doctorid;
     private String certificate;
     private String specialization;
@@ -19,8 +23,13 @@ public class Doctor extends User {
         this.doctorid = doctorid;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getCertificate() { return certificate; }
     public void setCertificate(String certificate) {

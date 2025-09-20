@@ -1,13 +1,18 @@
 package com.DPC.DigitalPatientCardBackend.patient;
 
 import com.DPC.DigitalPatientCardBackend.user.User;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Entity
+@Table(name = "patients")
 public class Patient extends User {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private float height;
     private float weight;
     private String bloodgroup;
@@ -16,6 +21,7 @@ public class Patient extends User {
     private boolean smoking;
     private List<String> allergies = new ArrayList<>();
     private List<String> pastconditions = new ArrayList<>();
+    @OneToMany
     private List<Disease> diseases = new ArrayList<>();
 
     public Patient() {}
@@ -24,9 +30,10 @@ public class Patient extends User {
         super(name, username, age, address, phoneNumber, email, password,gender);
     }
 
+
     // Patient-specific getters/setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
 
 
@@ -46,7 +53,7 @@ public class Patient extends User {
 
     public String getBloodgroup() { return bloodgroup; }
     public void setBloodgroup(String bloodgroup) {
-        if(!bloodgroup.isEmpty() && bloodgroup.length()<3) {
+        if(bloodgroup!=null && !bloodgroup.isEmpty() && bloodgroup.length()<3) {
             this.bloodgroup = bloodgroup;
         }
     }
