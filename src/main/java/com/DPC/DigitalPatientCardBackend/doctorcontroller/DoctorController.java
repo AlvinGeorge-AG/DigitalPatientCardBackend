@@ -89,7 +89,7 @@ public class DoctorController {
 //                DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 return ResponseEntity.ok(patient);
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor Not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient Not Found");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please Login");
     }
