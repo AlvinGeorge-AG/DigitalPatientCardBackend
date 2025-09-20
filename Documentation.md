@@ -513,8 +513,8 @@ GET /doctor/search?patientusername=john_doe
 **Authentication**: Required (session-based)
 
 **Request Parameters** (form-data):
-- `patientId`: Patient's unique ID (String, required)
-- `diseaseid`: Disease's unique ID (String, required)
+- `patientId`: Patient's unique ID (Long, required) (Hide these)
+- `diseaseid`: Disease's unique ID (Long, required)
 
 **Business Logic**:
 - If disease status is `true` (verified) → changes to `false` (unverified)
