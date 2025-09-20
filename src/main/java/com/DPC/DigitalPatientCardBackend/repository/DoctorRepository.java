@@ -1,17 +1,8 @@
 package com.DPC.DigitalPatientCardBackend.repository;
 
-
 import com.DPC.DigitalPatientCardBackend.doctor.Doctor;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-
-@Repository
-public interface DoctorRepository extends MongoRepository<Doctor,String> {
+public interface DoctorRepository extends JpaRepository{
     Doctor findByUsername(String username);
-    Doctor findDoctorById(String id);
-    Doctor deleteDoctorByUsername(String username);
-    List<Doctor> findAll();
 }

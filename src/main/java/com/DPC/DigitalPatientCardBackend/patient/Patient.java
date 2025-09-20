@@ -1,14 +1,12 @@
 package com.DPC.DigitalPatientCardBackend.patient;
 
 import com.DPC.DigitalPatientCardBackend.user.User;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "patients")
+
 public class Patient extends User {
-    @Id
+
     private String id;
     private float height;
     private float weight;

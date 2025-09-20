@@ -2,13 +2,10 @@ package com.DPC.DigitalPatientCardBackend.doctor;
 
 
 import com.DPC.DigitalPatientCardBackend.user.User;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Document(collection="doctors")
 public class Doctor extends User {
-    @Id
+
     private String id;
     private String doctorid;
     private String certificate;

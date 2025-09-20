@@ -1,8 +1,7 @@
 package com.DPC.DigitalPatientCardBackend.user;
 
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "users") // base collection
+
 public class User {
     protected String name;
     protected String username;
