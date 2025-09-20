@@ -1,3 +1,10 @@
+<h1>Documentation : </h1>
+<ol>
+<li>Patient Controller</li>
+<li>Doctor Controller</li>
+</ol>
+
+
 # Patient Controller API Documentation
 
 ## Base Information
@@ -42,16 +49,9 @@
   "username": "john_doe",
   "password": "securePassword123",
   "name": "John Doe",
-  "age": 30,
-  "gender": "Male",
-  "height": 175.5,
-  "weight": 70.2,
-  "bloodgroup": "O+",
-  "bloodpressure": "120/80",
-  "sugar": "Normal",
-  "smoking": false,
-  "allergies": "Peanuts, Dust",
-  "pastconditions": "None"
+  "address": "patient-address",
+  "email" : "Email",
+  "phoneNumber": "patientPhoneNumber"
 }
 ```
 
@@ -59,16 +59,10 @@
 - `username`: Unique identifier (String, required)
 - `password`: Plain text password (String, required)
 - `name`: Full patient name (String, required)
-- `age`: Patient age in years (Integer)
-- `gender`: Patient gender (String: "Male"/"Female"/"Other")
-- `height`: Height in centimeters (Double)
-- `weight`: Weight in kilograms (Double)
-- `bloodgroup`: Blood type (String: "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
-- `bloodpressure`: Blood pressure reading (String format: "systolic/diastolic")
-- `sugar`: Sugar level status (String)
-- `smoking`: Smoking status (Boolean)
-- `allergies`: Known allergies (String, comma-separated)
-- `pastconditions`: Past medical conditions (String)
+- `address`:Patient Address in String
+- `email`:Email of the Patient
+- `phoneNumber`:PhoneNumber of the Patient
+
 
 **Response**:
 - **200 OK**: Registration successful
@@ -247,16 +241,16 @@
 ```
 
 **Updatable Fields**:
-- `gender`: Patient gender
-- `height`: Height in centimeters
-- `weight`: Weight in kilograms
-- `bloodgroup`: Blood type
-- `bloodpressure`: Blood pressure reading
-- `sugar`: Sugar level status
-- `smoking`: Smoking status (boolean)
-- `age`: Age in years
-- `allergies`: Allergies list (converted to string)
-- `pastconditions`: Past conditions (converted to string)
+- `gender`: Patient gender (String: "Male"/"Female"/"Other")
+- `height`: Height in centimeters (Double)
+- `weight`: Weight in kilograms (Double)
+- `bloodgroup`: Blood type (String: "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
+- `bloodpressure`: Blood pressure reading (String format: "systolic/diastolic")
+- `sugar`: Sugar level status (String)
+- `smoking`: Smoking status (Boolean)
+- `age` :Age of the patient (Integer)
+- `allergies`: Known allergies (String, comma-separated)
+- `pastconditions`: Past medical conditions (String)
 
 **Response**:
 - **200 OK**: Update successful
@@ -302,59 +296,5 @@
 
 ---
 
-## Data Models
 
-### Patient Entity Fields
-```java
-// Core identification
-private String id;              // Auto-generated patient ID
-private String username;        // Unique login identifier
-private String password;        // Plain text (consider hashing)
-private String name;            // Full patient name
 
-// Demographics
-private int age;                // Age in years
-private String gender;          // Gender identity
-
-// Physical measurements
-private double height;          // Height in centimeters
-private double weight;          // Weight in kilograms
-private String bloodgroup;      // ABO blood type with Rh factor
-
-// Medical indicators
-private String bloodpressure;   // Format: "systolic/diastolic"
-private String sugar;           // Sugar level description
-private boolean smoking;        // Smoking status
-
-// Medical history
-private String allergies;       // Comma-separated allergy list
-private String pastconditions;  // Past medical conditions
-private List<Disease> diseases; // Associated diseases/conditions
-```
-
-### Disease Entity Fields
-```java
-private String diseaseid;       // Unique disease identifier
-private String description;     // Disease/condition description
-private String dateAdded;       // Date added (format: "dd-MM-yyyy")
-private boolean status;         // Verification status (true = verified)
-```
-
----
-
-## Security Considerations
-1. **Password Security**: Currently storing plain text passwords - implement hashing
-2. **Input Validation**: Validate all input parameters and request bodies
-3. **Session Security**: Consider session timeout and CSRF protection
-4. **Data Sanitization**: Sanitize user inputs to prevent injection attacks
-5. **Access Control**: Ensure patients can only access their own data
-
----
-
-## Best Practices
-1. Use descriptive variable names following camelCase convention
-2. Implement proper exception handling for database operations
-3. Add request/response logging for debugging
-4. Consider implementing DTO (Data Transfer Objects) for API responses
-5. Add comprehensive input validation and sanitization
-6. Implement proper HTTP status codes for all scenarios
