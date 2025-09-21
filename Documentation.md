@@ -8,7 +8,7 @@
 # 1. Patient Controller API Documentation
 
 ## Base Information
-- **Base URL**: `http://localhost:8080`
+- **Base URL**: `https://digital-patient-card-backend-839268888277.asia-south1.run.app/`
 - **Controller Path**: `/patient`
 - **Authentication**: Session-based authentication using HttpSession
 - **Framework**: Spring Boot with JPA Repository
@@ -299,7 +299,7 @@
 # 2. Doctor Controller API Documentation
 
 ## Base Information
-- **Base URL**: `http://localhost:8080`
+- **Base URL**: `https://digital-patient-card-backend-839268888277.asia-south1.run.app/`
 - **Controller Path**: `/doctor`
 - **Authentication**: Session-based authentication using HttpSession
 - **Framework**: Spring Boot with JPA Repository
