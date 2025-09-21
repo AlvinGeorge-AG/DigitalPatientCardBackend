@@ -70,7 +70,7 @@ public class PatientController {
         return ResponseEntity.ok(patient);
     }
 
-    @DeleteMapping("/logout")
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
         if(session.getAttribute("username")!=null){
             session.invalidate();
