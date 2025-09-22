@@ -1,27 +1,36 @@
 package com.DPC.DigitalPatientCardBackend.patient;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
+@Table(name = "disease")
 public class Disease {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable=false)
     private String diseasename;
-    private boolean status;
-    private String date;
-    private String diseaseid = UUID.randomUUID().toString();
-    public Disease() {
-        // Required for Spring and Jackson
+
+    @Column(nullable=false)
+    private LocalDate date;
+
+    private boolean status = false;
+
+    @Column(unique=true, nullable=false, updatable=false)
+    private String diseaseid;
+
+
+    public Disease() {}
+
+    public Disease(String diseasename, LocalDate date) {
+        this.diseasename = diseasename;
+        this.date = date;
+        this.diseaseid = UUID.randomUUID().toString();
     }
 
-    public Disease(String name,String date) {
-        this.diseasename = name;
-        this.status = false;
-        this.date = date;
-    }
 
     public Long getId() {
         return id;
@@ -41,6 +50,7 @@ public class Disease {
         }
     }
 
+
     public boolean isStatus() {
         return status;
     }
@@ -48,15 +58,18 @@ public class Disease {
         this.status = status;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
     public String getDiseaseid() {
         return diseaseid;
     }
-    public void setDiseaseid() {}
+    public void setDiseaseid(String diseaseid) {
+        this.diseaseid = diseaseid;
+    }
+
 }

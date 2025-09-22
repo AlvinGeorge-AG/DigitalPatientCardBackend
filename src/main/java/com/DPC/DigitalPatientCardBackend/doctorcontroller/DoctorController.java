@@ -10,9 +10,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/doctor")
@@ -43,6 +43,7 @@ public class DoctorController {
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Doctor Already Logged In Please Logout First!") ;
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(HttpSession session, @RequestParam String username, @RequestParam String password){
@@ -94,6 +95,7 @@ public class DoctorController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please Login");
     }
 
+
     @PostMapping("/verify")
     public ResponseEntity<?> verify(HttpSession session,@RequestParam Long patientId,@RequestParam String diseaseid){
         if(session.getAttribute("username")!=null){
@@ -101,7 +103,7 @@ public class DoctorController {
             if(patient!=null){
                 List<Disease> list = patient.getDiseases();
                 for(Disease d : list){
-                    if(d.getDiseaseid().equals(diseaseid)){
+                    if(d.getId().toString().equals(diseaseid)){
                         if(d.isStatus()){
                             d.setStatus(false);
                             patientRepository.save(patient);
@@ -116,7 +118,8 @@ public class DoctorController {
                         return ResponseEntity.ok(Map.of(
                                 "message", "Status updated successfully",
                                 "diseaseId", diseaseid,
-                                "newStatus", d.isStatus()
+                                "newStatus", d.isStatus(),
+                                "disease name" ,d.getDiseasename()
                         ));
                     }
                 }

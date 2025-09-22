@@ -26,10 +26,10 @@ public class Doctor extends User {
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
+
 
     public String getCertificate() { return certificate; }
     public void setCertificate(String certificate) {
@@ -38,12 +38,15 @@ public class Doctor extends User {
         }
     }
 
+
     public String getSpecialization() { return specialization; }
     public void setSpecialization(String specialization) {
         if(specialization != null && !specialization.isBlank()) {
             this.specialization = specialization;
         }
     }
+
+
     public String getDoctorid() {
         return doctorid;
     }
@@ -51,6 +54,10 @@ public class Doctor extends User {
         if(doctorid!=null &&  doctorid.length()==6 && !doctorid.isBlank()){
             this.doctorid = doctorid;
         }
+    }
+
+    public boolean isStatus() {
+        return status;
     }
     public boolean getStatus() { return status; }
     public void setStatus(boolean status) { this.status = status; }

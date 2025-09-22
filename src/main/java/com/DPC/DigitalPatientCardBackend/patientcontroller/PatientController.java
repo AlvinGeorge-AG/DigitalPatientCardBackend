@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
 import java.time.LocalDate;
 
-import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/patient")
@@ -83,22 +82,34 @@ public class PatientController {
     //Patient Specific Controllers
     @PostMapping("/adddisease")
     public ResponseEntity<?> addDisease(@RequestParam String description, HttpSession session) {
+
         if (session.getAttribute("username") == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please login first");
         }
+
+
         if (description.isBlank() || description.length() < 3) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid description");
         }
+
+
         Patient patient = patientRepository.findByUsername(session.getAttribute("username").toString());
-        if (patient != null) {
-            LocalDate now = LocalDate.now();
-            String formattedDate = now.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-            patient.getDiseases().add(new Disease(description, formattedDate));
-            patientRepository.save(patient);
-            return ResponseEntity.ok("Disease added successfully");
+        if (patient == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
+
+
+        LocalDate now = LocalDate.now();
+        Disease disease = new Disease(description, now);
+        patient.addDisease(disease);  // just add to patient's list
+
+        //  Save patient (disease will be persisted because of CascadeType.PERSIST)
+        patientRepository.save(patient);
+
+        return ResponseEntity.ok("Disease added successfully");
     }
+
+
 
     @GetMapping("/update-profile")
     public ResponseEntity<String> updateProfile(HttpSession session){

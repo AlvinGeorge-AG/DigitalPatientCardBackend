@@ -2,7 +2,6 @@ package com.DPC.DigitalPatientCardBackend.patient;
 
 import com.DPC.DigitalPatientCardBackend.user.User;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +18,21 @@ public class Patient extends User {
     private String bloodpressure;
     private String sugar;
     private boolean smoking;
+    @ElementCollection
     private List<String> allergies = new ArrayList<>();
+
+    @ElementCollection
     private List<String> pastconditions = new ArrayList<>();
-    @OneToMany
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "patients_diseases",
+            joinColumns = @JoinColumn(name = "patient_id"),
+            inverseJoinColumns = @JoinColumn(name = "disease_id")
+    )
     private List<Disease> diseases = new ArrayList<>();
 
+    //constructors
     public Patient() {}
 
     public Patient(String name, String username, int age, String address, String phoneNumber, String email, String password,String gender) {
@@ -31,10 +40,17 @@ public class Patient extends User {
     }
 
 
+    public void addDisease(Disease disease) {
+        diseases.add(disease);
+    }
+    public void removeDisease(Disease disease) {
+        diseases.remove(disease);
+
+    }
+
     // Patient-specific getters/setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
 
 
     public float getHeight() { return height; }
@@ -44,6 +60,7 @@ public class Patient extends User {
         }
     }
 
+
     public float getWeight() { return weight; }
     public void setWeight(float weight) {
         if(weight>3) {
@@ -51,12 +68,14 @@ public class Patient extends User {
         }
     }
 
+
     public String getBloodgroup() { return bloodgroup; }
     public void setBloodgroup(String bloodgroup) {
         if(bloodgroup!=null && !bloodgroup.isEmpty() && bloodgroup.length()<3) {
             this.bloodgroup = bloodgroup;
         }
     }
+
 
     public boolean isSmoking() {
         return smoking;
@@ -66,17 +85,18 @@ public class Patient extends User {
     }
     public String getSugar() { return sugar; }
     public void setSugar(String sugar) {
-        if(sugar!=null && !sugar.isEmpty() && sugar.length()<10) {
+        if(!sugar.isEmpty() && sugar.length()<10) {
             this.sugar = sugar;
         }
     }
 
     public String getBloodpressure() { return bloodpressure; }
     public void setBloodpressure(String bloodpressure) {
-        if(bloodpressure!=null && !bloodpressure.isEmpty() && bloodpressure.length()<7) {
+        if(!bloodpressure.isBlank() && bloodpressure.length() < 7) {
             this.bloodpressure = bloodpressure;
         }
     }
+
 
     public List<String> getAllergies() {
         return allergies;
@@ -88,6 +108,7 @@ public class Patient extends User {
 
     }
 
+
     public List<String> getPastconditions() {
         return pastconditions;
     }
@@ -97,6 +118,7 @@ public class Patient extends User {
             this.pastconditions.add(pastconditions);
         }
     }
+
 
     public List<Disease> getDiseases() {
         return diseases;

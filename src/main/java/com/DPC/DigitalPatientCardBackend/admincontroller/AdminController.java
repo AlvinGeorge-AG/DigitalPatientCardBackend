@@ -1,0 +1,108 @@
+package com.DPC.DigitalPatientCardBackend.admincontroller;
+
+import com.DPC.DigitalPatientCardBackend.admin.Admin;
+import com.DPC.DigitalPatientCardBackend.doctor.Doctor;
+import com.DPC.DigitalPatientCardBackend.patient.Patient;
+import com.DPC.DigitalPatientCardBackend.repository.AdminRepository;
+import com.DPC.DigitalPatientCardBackend.repository.DoctorRepository;
+import com.DPC.DigitalPatientCardBackend.repository.PatientRepository;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+
+@RestController
+@RequestMapping("/admin")
+public class AdminController {
+
+    private final DoctorRepository doctorRepository;
+    private final AdminRepository adminRepository;
+    private final PatientRepository patientRepository;
+
+    public AdminController(DoctorRepository doctorRepository, AdminRepository adminRepository, PatientRepository patientRepository) {
+        this.doctorRepository = doctorRepository;
+        this.adminRepository = adminRepository;
+        this.patientRepository = patientRepository;
+    }
+
+    // ===== Admin Login =====
+    @PostMapping("/login")
+    public ResponseEntity<?> loginverify(@RequestParam String username,
+                                         @RequestParam String password,
+                                         @RequestParam String adminpin,
+                                         HttpSession session) {
+        if (session.getAttribute("username") == null) {
+            if ( username.equals("dpc") && password.equals("dpc") && adminpin.equals("dpc") ) {
+                session.setAttribute("username", username);
+                session.setAttribute("adminpin", adminpin);
+
+                //                response.put("message", );
+//                response.put("username", username);
+                return ResponseEntity.ok().body("Login successful");
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
+        return ResponseEntity.ok("Already logged in");
+    }
+
+    // ===== Dashboard Data =====
+    @GetMapping("/dashboard")
+    public ResponseEntity<?> dashboard(HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            List<Patient> patients = patientRepository.findAll();
+            List<Doctor> doctors = doctorRepository.findAll();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("patients", patients);
+            response.put("doctors", doctors);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+    }
+
+    // ===== Delete Patient =====
+    @DeleteMapping("/patient/{id}")
+    public ResponseEntity<?> deletePatient(@PathVariable String username) {
+        Patient patient = patientRepository.findByUsername(username);
+        if (patient != null) {
+            patientRepository.deletePatientByUsername(patient.getUsername());
+            return ResponseEntity.ok("Patient deleted successfully");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
+    }
+
+    // ===== Delete Doctor =====
+    @DeleteMapping("/doctor/{id}")
+    public ResponseEntity<?> deleteDoctor(@PathVariable Long id, HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            Doctor doctor = doctorRepository.findDoctorById(id);
+            if (doctor != null) {
+                doctorRepository.deleteDoctorByUsername(doctor.getUsername());
+                return ResponseEntity.ok("Doctor deleted successfully");
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor not found");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+    }
+
+    // ===== Verify Doctor =====
+    @PostMapping("/verify/doctor/{id}")
+    public ResponseEntity<?> verifyDoctor(@PathVariable Long id) {
+        Doctor doctor = doctorRepository.findDoctorById(id);
+        if (doctor != null) {
+            doctor.setStatus(true);
+            doctorRepository.save(doctor);
+            return ResponseEntity.ok("Doctor verified successfully");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor not found");
+    }
+
+    // ===== Logout =====
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logged out successfully");
+    }
+}

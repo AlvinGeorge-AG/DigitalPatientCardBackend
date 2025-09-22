@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PatientRepository extends JpaRepository<Patient, Long> {
     Patient findByUsername(String username);
-    Patient findPatientById(long id);
+    void deletePatientByUsername(String username);
+
+    Patient findPatientById(Long id);
     // You get save(), findAll(), findById(), deleteById(), etc. for free
 }
+
