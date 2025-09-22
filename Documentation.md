@@ -112,28 +112,54 @@
 - **200 OK**: Returns complete patient object
   ```json
   {
-    "id": "patient123",
-    "username": "john_doe",
-    "name": "John Doe",
-    "age": 30,
-    "gender": "Male",
-    "height": 175.5,
-    "weight": 70.2,
-    "bloodgroup": "O+",
-    "bloodpressure": "120/80",
-    "sugar": "Normal",
-    "smoking": false,
-    "allergies": "Peanuts, Dust",
-    "pastconditions": "None",
-    "diseases": [
-      {
-        "diseaseid": "disease001",
-        "description": "Hypertension",
-        "dateAdded": "20-09-2025",
-        "status": true
-      }
-    ]
-  }
+  "name": "John Doe",
+  "username": "Alvin",
+  "gender": null,
+  "password": "123",
+  "age": 0,
+  "address": "patient-address",
+  "phoneNumber": "patientPhoneNumber",
+  "email": "Email",
+  "id": 1,
+  "height": 0.0,
+  "weight": 0.0,
+  "bloodgroup": null,
+  "bloodpressure": null,
+  "sugar": null,
+  "smoking": false,
+  "allergies": [],
+  "pastconditions": [],
+  "diseases": [
+    {
+      "id": 1,
+      "diseasename": "Shivering",
+      "date": "2025-09-22",
+      "status": false,
+      "diseaseid": "bd34cf58-e223-4fa2-8794-f2410ce143bc"
+    },
+    {
+      "id": 2,
+      "diseasename": "Fever",
+      "date": "2025-09-22",
+      "status": false,
+      "diseaseid": "4df1ff09-37d1-44fb-add4-ebf148741c97"
+    },
+    {
+      "id": 3,
+      "diseasename": "Stomach Pain",
+      "date": "2025-09-22",
+      "status": false,
+      "diseaseid": "6a26473e-6f25-4b32-bdb5-c8fdceba0ead"
+    },
+    {
+      "id": 4,
+      "diseasename": "Leg Pain",
+      "date": "2025-09-22",
+      "status": false,
+      "diseaseid": "4af223f8-82a7-4e6f-8af9-f10cf344273e"
+    }
+  ]
+}
   ```
 - **404 NOT FOUND**: Not logged in
   ```json
