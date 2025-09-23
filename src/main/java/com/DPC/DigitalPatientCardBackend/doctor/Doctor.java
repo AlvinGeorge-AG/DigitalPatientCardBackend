@@ -3,6 +3,8 @@ package com.DPC.DigitalPatientCardBackend.doctor;
 
 import com.DPC.DigitalPatientCardBackend.user.User;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "doctors")
@@ -15,12 +17,32 @@ public class Doctor extends User {
     private String certificate;
     private String specialization;
     private boolean status;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "doctors_referrals",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "referral_id")
+    )
+    private List<Referral> referrals = new ArrayList<>();
+
     public Doctor() {}
     public Doctor(String doctorid,String name, String username, int age, String address, String phoneNumber, String email, String password,String gender, String certificate, String specialization) {
         super(name, username, age, address, phoneNumber, email, password,gender);
         this.certificate = certificate;
         this.specialization = specialization;
         this.doctorid = doctorid;
+    }
+
+    public void referPatient(String patientUsername, String referringDoctor, String reason) {
+        if (referringDoctor != null && patientUsername != null && !patientUsername.isBlank()) {
+            Referral referral = new Referral(patientUsername, this.getUsername(), referringDoctor, reason);
+            referrals.add(referral);
+        }
+    }
+
+    public List<Referral> getReferrals() {
+        return referrals;
     }
 
     public Long getId() {

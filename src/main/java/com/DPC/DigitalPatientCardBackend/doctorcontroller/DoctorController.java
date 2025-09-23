@@ -2,6 +2,7 @@ package com.DPC.DigitalPatientCardBackend.doctorcontroller;
 
 
 import com.DPC.DigitalPatientCardBackend.doctor.Doctor;
+import com.DPC.DigitalPatientCardBackend.doctor.Referral;
 import com.DPC.DigitalPatientCardBackend.repository.DoctorRepository;
 import com.DPC.DigitalPatientCardBackend.patient.Disease;
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/doctor")
 public class DoctorController {
+
 
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
@@ -129,4 +131,44 @@ public class DoctorController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please Login");
     }
+
+
+    @PostMapping("/refer")
+    public ResponseEntity<?> refer(HttpSession session,
+                        @RequestParam String patientUsername,
+                        @RequestParam String referredDoctorUsername,
+                        @RequestParam(required = false, defaultValue = "") String reason) {
+        if (session.getAttribute("username") != null) {
+            Doctor referringDoctor = doctorRepository.findByUsername((String) session.getAttribute("username"));
+            Doctor _referredDoctor = doctorRepository.findByUsername(referredDoctorUsername);
+            Patient patient = patientRepository.findByUsername(patientUsername);
+
+            if (referringDoctor != null && _referredDoctor != null && patient != null) {
+                // create and attach referral on referring doctor
+                _referredDoctor.referPatient(patient.getUsername(), referringDoctor.getUsername(), reason);
+                doctorRepository.save(_referredDoctor);
+                return ResponseEntity.ok().body(Map.of(
+                        "DoctorReferred","Success",
+                        "ReferringDoctor", referringDoctor.getUsername(),
+                        "Referred Doctor",_referredDoctor.getUsername()
+                ));
+            }
+            if(_referredDoctor == null)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ReferredDoctor Not Found");
+            if(patient == null)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient Not Found");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please Login");
+    }
+
+    @GetMapping("/getreferrals")
+    public ResponseEntity<?> getReferals(HttpSession session){
+        if(session.getAttribute("username")!=null){
+            Doctor thisDoctor = doctorRepository.findByUsername((String) session.getAttribute("username"));
+            List<Referral> referrals = thisDoctor.getReferrals();
+            return ResponseEntity.ok(Map.of("Referrals",referrals));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please Login");
+    }
+
 }
