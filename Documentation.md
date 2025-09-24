@@ -1,4 +1,4 @@
-<h1>Documentation : </h1>
+<h1>API Documentation : </h1>
 <ol>
 <li>Patient Controller</li>
 <li>Doctor Controller</li>
@@ -600,3 +600,5 @@ GET /doctor/search?patientusername=john_doe
     - Displayed as "Verified" on patient card
 
 ---
+<p>NOTE</p>
+<b>The Referral Part Will Be added Shortly!</b>
