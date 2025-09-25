@@ -6,14 +6,12 @@ import com.DPC.DigitalPatientCardBackend.doctor.Referral;
 import com.DPC.DigitalPatientCardBackend.repository.DoctorRepository;
 import com.DPC.DigitalPatientCardBackend.patient.Disease;
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.DPC.DigitalPatientCardBackend.repository.PatientRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +43,7 @@ public class DoctorController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(HttpSession session, @RequestBody Doctor doctor){
-        if(session.getAttribute("username")==null){
+        if(session.getAttribute("username")==null && doctorRepository.findByUsername(doctor.getUsername())==null){
             session.setAttribute("username",doctor.getUsername());
             String password = passwordEncoder.encode(doctor.getPassword());
             doctor.setPassword(password);

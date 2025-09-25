@@ -5,6 +5,8 @@ import com.DPC.DigitalPatientCardBackend.repository.PatientRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
 import java.time.LocalDate;
@@ -15,12 +17,18 @@ import java.time.LocalDate;
 public class PatientController {
 
     private final PatientRepository patientRepository;
-
+    private final PasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
     public PatientController(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
     }
 
-
+    @GetMapping("/login")
+    public ResponseEntity<?> login(HttpSession session){
+        if(session.getAttribute("username")==null){
+            return ResponseEntity.ok("Success");
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Patient Already Logged In Please Logout First!") ;
+    }
 
     @GetMapping("/register")
     public ResponseEntity<?> register(HttpSession session){
@@ -32,9 +40,12 @@ public class PatientController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerpatient(@RequestBody Patient patient){
+    public ResponseEntity<?> registerpatient(@RequestBody Patient patient,HttpSession session){
         String username=patient.getUsername();
-        if(patientRepository.findByUsername(username)==null){
+        if(patientRepository.findByUsername(username)==null && session.getAttribute("username")==null){
+            session.setAttribute("username",patient.getUsername());
+            String password = passwordEncoder.encode(patient.getPassword());
+            patient.setPassword(password);
             patientRepository.save(patient);
             return ResponseEntity.ok("Patient registered successfully");
         }
@@ -48,7 +59,7 @@ public class PatientController {
             if(patient==null){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("patient not found");
             };
-            if (username.equals(patient.getUsername()) && password.equals(patient.getPassword())) {
+            if (username.equals(patient.getUsername()) && passwordEncoder.matches(password, patient.getPassword())) {
                 session.setAttribute("username", patient.getUsername());
                 return ResponseEntity.ok().body("Login Successful");
             } else {
