@@ -9,6 +9,8 @@ import com.DPC.DigitalPatientCardBackend.repository.PatientRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -27,19 +29,29 @@ public class AdminController {
         this.patientRepository = patientRepository;
     }
 
+    private final PasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
+
     // ===== Admin Login =====
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestParam String username , @RequestParam String password,@RequestParam String adminpin ){
+        Admin admin = new Admin();
+        admin.setUsername(username);
+        admin.setPassword(passwordEncoder.encode(password));
+        admin.setAdminpin(passwordEncoder.encode(adminpin));
+        adminRepository.save(admin);
+        return ResponseEntity.ok().body("Success Admin");
+    }
     @PostMapping("/login")
     public ResponseEntity<?> loginverify(@RequestParam String username,
                                          @RequestParam String password,
                                          @RequestParam String adminpin,
                                          HttpSession session) {
         if (session.getAttribute("username") == null) {
-            if ( username.equals("dpc") && password.equals("dpc") && adminpin.equals("dpc") ) {
+            Admin admin = adminRepository.findByUsername(username);
+            if (admin!=null && passwordEncoder.matches(password,admin.getPassword()) && passwordEncoder.matches(adminpin,admin.getAdminpin()) ) {
                 session.setAttribute("username", username);
                 session.setAttribute("adminpin", adminpin);
 
-                //                response.put("message", );
-//                response.put("username", username);
                 return ResponseEntity.ok().body("Login successful");
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");

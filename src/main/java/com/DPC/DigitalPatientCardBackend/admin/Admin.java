@@ -1,16 +1,19 @@
 package com.DPC.DigitalPatientCardBackend.admin;
 
 import com.DPC.DigitalPatientCardBackend.user.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+
 
 @Entity
 @Table(name = "admins")
 public class Admin extends User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String adminpin;
+
+
 
     public Admin(String adminpin) {
         this.adminpin = adminpin;
@@ -28,6 +31,9 @@ public class Admin extends User {
 
     public String getAdminpin() {
         return adminpin;
+    }
+    public void setAdminpin(String adminpin) {
+        this.adminpin = adminpin;
     }
 }
 

@@ -6,10 +6,14 @@ import com.DPC.DigitalPatientCardBackend.doctor.Referral;
 import com.DPC.DigitalPatientCardBackend.repository.DoctorRepository;
 import com.DPC.DigitalPatientCardBackend.patient.Disease;
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.DPC.DigitalPatientCardBackend.repository.PatientRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +23,15 @@ import java.util.Map;
 @RequestMapping("/doctor")
 public class DoctorController {
 
-
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+
+    private final PasswordEncoder passwordEncoder= new BCryptPasswordEncoder();
 
     public DoctorController(DoctorRepository doctorRepository, PatientRepository patientRepository) {
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+
     }
 
     @GetMapping("/register")
@@ -40,6 +46,9 @@ public class DoctorController {
     @PostMapping("/register")
     public ResponseEntity<?> register(HttpSession session, @RequestBody Doctor doctor){
         if(session.getAttribute("username")==null){
+            session.setAttribute("username",doctor.getUsername());
+            String password = passwordEncoder.encode(doctor.getPassword());
+            doctor.setPassword(password);
             doctorRepository.save(doctor);
             return   ResponseEntity.ok("Doctor Registered successfully!");
         }
@@ -51,7 +60,7 @@ public class DoctorController {
     public ResponseEntity<?> login(HttpSession session, @RequestParam String username, @RequestParam String password){
         if(session.getAttribute("username")==null){
             Doctor doctor = doctorRepository.findByUsername(username);
-            if(doctor!=null && doctor.getPassword().equals(password)){
+            if(doctor!=null && passwordEncoder.matches(password,doctor.getPassword())){
                 session.setAttribute("username",doctor.getUsername());
                 return ResponseEntity.ok("Logged in successfully!");
             }
