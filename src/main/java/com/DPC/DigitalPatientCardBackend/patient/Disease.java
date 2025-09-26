@@ -19,16 +19,12 @@ public class Disease {
 
     private boolean status = false;
 
-    @Column(unique=true, nullable=false, updatable=false)
-    private String diseaseid;
-
 
     public Disease() {}
 
     public Disease(String diseasename, LocalDate date) {
         this.diseasename = diseasename;
         this.date = date;
-        this.diseaseid = UUID.randomUUID().toString();
     }
 
 
@@ -65,11 +61,5 @@ public class Disease {
         this.date = date;
     }
 
-    public String getDiseaseid() {
-        return diseaseid;
-    }
-    public void setDiseaseid(String diseaseid) {
-        this.diseaseid = diseaseid;
-    }
 
 }
