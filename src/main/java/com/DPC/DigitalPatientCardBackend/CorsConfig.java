@@ -10,7 +10,7 @@ public class CorsConfig {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        String frontendUrl = System.getenv("FRONTEND_URL");
+        String frontendUrl = System.getenv("https://dpcfrontend.vercel.app/");
         if (frontendUrl == null || frontendUrl.isBlank()) {
             // Default to localhost dev URL if env variable is missing
             frontendUrl = "http://localhost:5173";
