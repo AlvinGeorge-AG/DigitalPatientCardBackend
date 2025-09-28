@@ -10,18 +10,14 @@ public class CorsConfig {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        String frontendUrl = System.getenv("https://dpcfrontend.vercel.app/");
-        if (frontendUrl == null || frontendUrl.isBlank()) {
-            // Default to localhost dev URL if env variable is missing
-            frontendUrl = "http://localhost:5173";
-        }
-
-        String finalFrontendUrl = frontendUrl; // needed for lambda
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(finalFrontendUrl)
+                        .allowedOrigins(
+                                "http://localhost:5173",               // local dev
+                                "https://dpcfrontend.vercel.app"      // production frontend
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
