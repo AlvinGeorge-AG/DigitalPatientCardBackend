@@ -19,10 +19,10 @@ public class Patient extends User {
     private String sugar="";
     private boolean smoking;
 
-    private String allergies ;
+    private String allergies="" ;
 
 
-    private String pastconditions ;
+    private String pastconditions="" ;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
