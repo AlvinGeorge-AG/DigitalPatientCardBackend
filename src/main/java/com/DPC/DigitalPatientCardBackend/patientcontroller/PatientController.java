@@ -58,7 +58,7 @@ public class PatientController {
             Patient patient = patientRepository.findByUsername(username);
             if(patient==null){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("patient not found");
-            };
+            }
             if (username.equals(patient.getUsername()) && passwordEncoder.matches(password, patient.getPassword())) {
                 session.setAttribute("username", patient.getUsername());
                 return ResponseEntity.ok().body("Login Successful");
