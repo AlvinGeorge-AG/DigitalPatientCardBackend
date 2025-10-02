@@ -14,9 +14,9 @@ public class Patient extends User {
     private Long id;
     private float height;
     private float weight;
-    private String bloodgroup;
-    private String bloodpressure;
-    private String sugar;
+    private String bloodgroup="";
+    private String bloodpressure="";
+    private String sugar="";
     private boolean smoking;
     @ElementCollection
     private List<String> allergies = new ArrayList<>();
