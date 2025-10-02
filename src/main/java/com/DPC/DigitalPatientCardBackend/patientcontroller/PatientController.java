@@ -144,8 +144,8 @@ public class PatientController {
         existingPatient.setSugar(patient.getSugar());
         existingPatient.setSmoking(patient.isSmoking());
         existingPatient.setAge(patient.getAge());
-        existingPatient.setAllergies(patient.getAllergies().toString());
-        existingPatient.setPastconditions(patient.getPastconditions().toString());
+//        existingPatient.setAllergies(patient.getAllergies());
+//        existingPatient.setPastconditions(patient.getPastconditions());
         patientRepository.save(existingPatient);
         return ResponseEntity.ok("Patient updated successfully");
     }

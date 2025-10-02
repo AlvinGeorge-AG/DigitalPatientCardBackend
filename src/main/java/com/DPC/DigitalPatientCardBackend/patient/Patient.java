@@ -14,15 +14,15 @@ public class Patient extends User {
     private Long id;
     private float height;
     private float weight;
-    private String bloodgroup;
-    private String bloodpressure;
-    private String sugar;
+    private String bloodgroup="";
+    private String bloodpressure="";
+    private String sugar="";
     private boolean smoking;
-    @ElementCollection
-    private List<String> allergies = new ArrayList<>();
 
-    @ElementCollection
-    private List<String> pastconditions = new ArrayList<>();
+    private String allergies="" ;
+
+
+    private String pastconditions="" ;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -98,24 +98,23 @@ public class Patient extends User {
     }
 
 
-    public List<String> getAllergies() {
+    public String getAllergies() {
         return allergies;
     }
     public void setAllergies(String allergies) {
         if(allergies!=null && !allergies.isEmpty()) {
-            this.allergies.add(allergies);
+            this.allergies = allergies;
         }
 
     }
 
 
-    public List<String> getPastconditions() {
+    public String getPastconditions() {
         return pastconditions;
     }
     public void setPastconditions(String pastconditions) {
         if(pastconditions!=null && !pastconditions.isEmpty()) {
-
-            this.pastconditions.add(pastconditions);
+            this.pastconditions =  pastconditions;
         }
     }
 
