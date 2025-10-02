@@ -16,7 +16,8 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:5173",               // local dev
-                                "https://dpcfrontend.vercel.app"      // production frontend
+                                "https://dpcfrontend.vercel.app",   // production frontend
+                                "https://hoppscotch.io"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

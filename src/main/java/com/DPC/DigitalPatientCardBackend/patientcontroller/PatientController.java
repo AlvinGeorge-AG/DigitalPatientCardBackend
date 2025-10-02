@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
 import java.time.LocalDate;
+import java.util.List;
 
 
 @RestController
@@ -158,5 +159,11 @@ public class PatientController {
         }
         Patient patient = patientRepository.findByUsername(username);
         return ResponseEntity.ok(patient);
+    }
+
+    @PostMapping("/all")
+    public ResponseEntity<?> all(){
+        List<Patient> patients = patientRepository.findAll();
+        return ResponseEntity.ok(patients);
     }
 }
