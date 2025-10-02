@@ -27,18 +27,23 @@ public class PdfService {
             throw new RuntimeException("Patient not found: " + username);
         }
 
+        // Build lines for PDF
         List<String> lines = List.of(
                 "Patient Name: " + patient.getName(),
                 "Phone Number: " + patient.getPhoneNumber(),
-                "Blood Group: " + patient.getBloodgroup()
+                "Blood Group: " + patient.getBloodgroup(),
+                "Height: " + patient.getHeight() + " cm",
+                "Weight: " + patient.getWeight() + " kg"
         );
 
+        // Build diseases table
         List<List<String>> table = new ArrayList<>();
         table.add(List.of("Disease", "Status"));
         for (Disease d : patient.getDiseases()) {
             table.add(List.of(d.getDiseasename(), d.isStatus() ? "Verified" : "Unverified"));
         }
 
+        // Generate PDF
         PdfGenerator.generatePdf(out, "Patient Report", lines, table);
     }
 }
