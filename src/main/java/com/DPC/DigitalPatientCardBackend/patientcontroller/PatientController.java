@@ -90,6 +90,15 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please Login");
     }
 
+    @GetMapping("/diseases")
+    public ResponseEntity<?> getDiseases(HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please login");
+        }
+        Patient patient = patientRepository.findByUsername(username);
+        return ResponseEntity.ok(patient.getDiseases());
+    }
 
     //Patient Specific Controllers
     @PostMapping("/adddisease")
@@ -113,7 +122,10 @@ public class PatientController {
 
         LocalDate now = LocalDate.now();
         Disease disease = new Disease(description, now);
-        patient.addDisease(disease);  // just add to patient's list
+        //patient.addDisease(disease);  // just add to patient's list
+        disease.setPatient(patient); // Set owning side first
+        patient.getDiseases().add(disease); // Add to collection
+
 
         //  Save patient (disease will be persisted because of CascadeType.PERSIST)
         patientRepository.save(patient);

@@ -78,20 +78,20 @@ public class AdminController {
     // ===== Delete Patient =====
     @Transactional
     @DeleteMapping("/patient/{id}")
-    public ResponseEntity<?> deletePatient(@PathVariable Long id,HttpSession session) {
+    public ResponseEntity<?> deletePatient(@PathVariable Long id, HttpSession session) {
         if (session.getAttribute("username") == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
         }
-        if (!patientRepository.existsById(id)) {
+        Patient patient = patientRepository.findById(id).orElse(null);
+        if (patient == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
         }
-        try{
-            patientRepository.deleteById(id);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient not found");
+        try {
+            patientRepository.delete(patient); // Cascade deletes diseases
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting patient");
         }
-        return ResponseEntity.ok("Patient deleted successfully");
-
+        return ResponseEntity.ok("Patient and all associated diseases deleted successfully");
     }
 
     // ===== Delete Doctor =====
@@ -101,12 +101,14 @@ public class AdminController {
         if (session.getAttribute("username") == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
         }
-
         if (!doctorRepository.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor not found");
         }
-
-        doctorRepository.deleteById(id);
+        try {
+            doctorRepository.deleteById(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting doctor");
+        }
         return ResponseEntity.ok("Doctor deleted successfully");
     }
 

@@ -1,6 +1,7 @@
 package com.DPC.DigitalPatientCardBackend.patient;
 
 import com.DPC.DigitalPatientCardBackend.user.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,8 @@ public class Patient extends User {
 
     private String pastconditions="" ;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    @JoinTable(
-            name = "patients_diseases",
-            joinColumns = @JoinColumn(name = "patient_id"),
-            inverseJoinColumns = @JoinColumn(name = "disease_id")
-    )
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Disease> diseases = new ArrayList<>();
 
     //constructors

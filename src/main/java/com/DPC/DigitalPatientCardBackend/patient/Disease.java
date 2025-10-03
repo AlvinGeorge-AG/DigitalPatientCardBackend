@@ -1,5 +1,6 @@
 package com.DPC.DigitalPatientCardBackend.patient;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -19,6 +20,11 @@ public class Disease {
 
     private boolean status = false;
 
+    // Add this field for the relationship
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    @JsonBackReference
+    private Patient patient;
 
     public Disease() {}
 
@@ -27,6 +33,7 @@ public class Disease {
         this.date = date;
     }
 
+    // getters and setters
 
     public Long getId() {
         return id;
@@ -46,10 +53,10 @@ public class Disease {
         }
     }
 
-
     public boolean isStatus() {
         return status;
     }
+
     public void setStatus(boolean status) {
         this.status = status;
     }
@@ -57,9 +64,16 @@ public class Disease {
     public LocalDate getDate() {
         return date;
     }
+
     public void setDate(LocalDate date) {
         this.date = date;
     }
 
+    public Patient getPatient() {
+        return patient;
+    }
 
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
 }
