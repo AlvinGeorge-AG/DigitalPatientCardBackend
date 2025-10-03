@@ -83,8 +83,11 @@ public class AdminController {
         if (!patientRepository.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
         }
-
-        patientRepository.deleteById(id);
+        try{
+            patientRepository.deleteById(id);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient not found");
+        }
         return ResponseEntity.ok("Patient deleted successfully");
 
     }

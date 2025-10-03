@@ -1,6 +1,5 @@
 package com.DPC.DigitalPatientCardBackend.repository;
 
-
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
