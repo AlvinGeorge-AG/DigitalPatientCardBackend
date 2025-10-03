@@ -106,13 +106,13 @@ public class DoctorController {
 
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verify(HttpSession session,@RequestParam Long patientId,@RequestParam String diseaseid){
+    public ResponseEntity<?> verify(HttpSession session,@RequestParam Long patientId,@RequestParam Long diseaseid){
         if(session.getAttribute("username")!=null){
             Patient patient = patientRepository.findPatientById(patientId);
             if(patient!=null){
                 List<Disease> list = patient.getDiseases();
                 for(Disease d : list){
-                    if(d.getId().toString().equals(diseaseid)){
+                    if(d.getId().equals(diseaseid)){
                         if(d.isStatus()){
                             d.setStatus(false);
                             patientRepository.save(patient);
