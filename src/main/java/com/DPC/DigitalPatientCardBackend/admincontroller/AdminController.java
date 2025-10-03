@@ -75,7 +75,7 @@ public class AdminController {
     }
 
     // ===== Delete Patient =====
-    @DeleteMapping("/patient/{id}")
+    @DeleteMapping("/patient/{username}")
     public ResponseEntity<?> deletePatient(@PathVariable String username) {
         Patient patient = patientRepository.findByUsername(username);
         if (patient != null) {
