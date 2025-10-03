@@ -142,17 +142,17 @@ public class DoctorController {
 
     @PostMapping("/refer")
     public ResponseEntity<?> refer(HttpSession session,
-                        @RequestParam String patientUsername,
+                        @RequestParam String patientusername,
                         @RequestParam String referredDoctorUsername,
-                        @RequestParam(required = false, defaultValue = "") String reason) {
+                        @RequestParam(required = false, defaultValue = "") String remarks) {
         if (session.getAttribute("username") != null) {
             Doctor referringDoctor = doctorRepository.findByUsername((String) session.getAttribute("username"));
             Doctor _referredDoctor = doctorRepository.findByUsername(referredDoctorUsername);
-            Patient patient = patientRepository.findByUsername(patientUsername);
+            Patient patient = patientRepository.findByUsername(patientusername);
 
             if (referringDoctor != null && _referredDoctor != null && patient != null) {
                 // create and attach referral on referring doctor
-                _referredDoctor.referPatient(patient.getUsername(), referringDoctor.getUsername(), reason);
+                _referredDoctor.referPatient(patient.getUsername(), referringDoctor.getUsername(), remarks);
                 doctorRepository.save(_referredDoctor);
                 return ResponseEntity.ok().body(Map.of(
                         "DoctorReferred","Success",
@@ -173,7 +173,7 @@ public class DoctorController {
         if(session.getAttribute("username")!=null){
             Doctor thisDoctor = doctorRepository.findByUsername((String) session.getAttribute("username"));
             List<Referral> referrals = thisDoctor.getReferrals();
-            return ResponseEntity.ok(Map.of("Referrals",referrals));
+            return ResponseEntity.ok(referrals);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please Login");
     }
