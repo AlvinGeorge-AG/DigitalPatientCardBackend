@@ -24,7 +24,7 @@ public class Patient extends User {
 
     private String pastconditions="" ;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
             name = "patients_diseases",
             joinColumns = @JoinColumn(name = "patient_id"),
