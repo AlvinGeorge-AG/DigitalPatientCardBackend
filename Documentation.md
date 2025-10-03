@@ -601,4 +601,111 @@ GET /doctor/search?patientusername=john_doe
 
 ---
 <p>NOTE</p>
-<b>The Referral Part Will Be added Shortly!</b>
+
+### 8.Refer a Patient
+
+**POST** `/refer`
+
+**Description**: Allows a logged-in doctor to refer a patient to another doctor and attach optional remarks to the referral. The referred doctor’s referral list is updated accordingly.
+
+**Authentication**: Required (session-based)
+
+**Request Parameters** (form-data):
+
+- `patientusername`: Patient's username (*String*, required)
+- `referredDoctorUsername`: Doctor username to whom the patient is referred (*String*, required)
+- `remarks`: Optional remarks for the referral (*String*, optional; defaults to empty string)
+
+**Business Logic**:
+
+- Checks if the session contains a valid `username`; if not, returns a "Please Login" error.
+- Fetches the referring doctor, referred doctor, and patient from their repositories using their respective usernames.
+- If all entities exist:
+    - Calls `_referredDoctor.referPatient(...)` to add the referral to the referred doctor's records.
+    - Saves the updated referred doctor in the repository.
+    - Returns a success response with usernames of both doctors.
+- If referred doctor is not found, returns a 404 with "ReferredDoctor Not Found".
+- If patient is not found, returns a 404 with "Patient Not Found".
+- If user is not logged in, returns a 400 with "Please Login".
+
+**Response**:
+
+- **200 OK**: Referral created successfully
+
+```json
+{
+  "DoctorReferred": "Success",
+  "ReferringDoctor": "drjohn",
+  "Referred Doctor": "drsmith"
+}
+```
+
+- **404 NOT FOUND**: Referred doctor not found
+
+```json
+"ReferredDoctor Not Found"
+```
+
+- **404 NOT FOUND**: Patient not found
+
+```json
+"Patient Not Found"
+```
+
+- **400 BAD REQUEST**: Not logged in
+
+```json
+"Please Login"
+```
+
+
+***
+
+### 9. Get Doctor Referrals
+
+**GET** `/getreferrals`
+
+**Description**: Returns the list of all referrals received by the currently logged-in doctor.
+
+**Authentication**: Required (session-based)
+
+**Request Parameters**:
+
+- None (session required)
+
+**Business Logic**:
+
+- Checks if the session contains a valid `username`; if not, returns a "Please Login" error.
+- Finds the doctor using the session `username` and retrieves their referral list.
+- Sends the referral list as a response.
+
+**Response**:
+
+- **200 OK**: List of referrals
+
+```json
+[
+  {
+    "patientUsername": "patient123",
+    "referrerDoctorUsername": "drjohn",
+    "remarks": "Routine checkup"
+  },
+  {
+    "patientUsername": "patient456",
+    "referrerDoctorUsername": "drjohn",
+    "remarks": "Specialist opinion"
+  }
+]
+```
+
+- **400 BAD REQUEST**: Not logged in
+
+```json
+"Please Login"
+```
+
+
+***
+
+**Note:** All endpoints require active session-based authentication. Username validation and entity existence checks are performed before processing requests.
+
