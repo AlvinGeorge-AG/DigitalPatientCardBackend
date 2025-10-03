@@ -1,5 +1,7 @@
 package com.DPC.DigitalPatientCardBackend.doctor;
 
+import com.DPC.DigitalPatientCardBackend.patient.Patient;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +14,11 @@ public class Referral {
     private String referringDoctor;
     private String referredDoctor;
     private String reason;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    @JsonBackReference
+    private Doctor doctor;
 
     public Referral(String patientUsername, String referringDoctor, String referredDoctor, String reason) {
         this.patientUsername = patientUsername;
@@ -42,4 +49,7 @@ public class Referral {
 
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
+
+    public Doctor getDoctor() { return doctor; }
+    public void setDoctor(Doctor doctor) { this.doctor = doctor; }
 }

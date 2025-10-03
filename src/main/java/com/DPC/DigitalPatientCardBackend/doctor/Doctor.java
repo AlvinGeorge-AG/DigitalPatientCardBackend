@@ -2,6 +2,7 @@ package com.DPC.DigitalPatientCardBackend.doctor;
 
 
 import com.DPC.DigitalPatientCardBackend.user.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +19,8 @@ public class Doctor extends User {
     private String specialization;
     private boolean status;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "doctors_referrals",
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            inverseJoinColumns = @JoinColumn(name = "referral_id")
-    )
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Referral> referrals = new ArrayList<>();
 
     public Doctor() {}

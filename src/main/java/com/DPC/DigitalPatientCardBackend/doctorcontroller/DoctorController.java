@@ -152,7 +152,10 @@ public class DoctorController {
 
             if (referringDoctor != null && _referredDoctor != null && patient != null) {
                 // create and attach referral on referring doctor
-                _referredDoctor.referPatient(patient.getUsername(), referringDoctor.getUsername(), remarks);
+//                _referredDoctor.referPatient(patient.getUsername(), referringDoctor.getUsername(), remarks);
+                Referral referral = new Referral(patientusername,referringDoctor.getUsername(),referredDoctorUsername,remarks);
+                referral.setDoctor(_referredDoctor);
+                _referredDoctor.getReferrals().add(referral);
                 doctorRepository.save(_referredDoctor);
                 return ResponseEntity.ok().body(Map.of(
                         "DoctorReferred","Success",
