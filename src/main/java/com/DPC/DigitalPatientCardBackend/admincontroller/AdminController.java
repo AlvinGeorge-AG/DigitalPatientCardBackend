@@ -96,7 +96,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor not found");
         }
 
-        doctorRepository.deleteDoctorById(id);
+        doctorRepository.deleteById(id);
         return ResponseEntity.ok("Doctor deleted successfully");
     }
 
