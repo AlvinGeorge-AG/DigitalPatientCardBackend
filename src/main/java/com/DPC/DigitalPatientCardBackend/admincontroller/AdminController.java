@@ -117,4 +117,22 @@ public class AdminController {
         session.invalidate();
         return ResponseEntity.ok("Logged out successfully");
     }
+    @PostMapping("/patients/all")
+    public ResponseEntity<?> patientsall(HttpSession session) {
+        if(session.getAttribute("username") != null) {
+            List<Patient> patients = patientRepository.findAll();
+            return ResponseEntity.ok(patients);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+
+    }
+    @PostMapping("/doctors/all")
+    public ResponseEntity<?> doctorsall(HttpSession session) {
+        if(session.getAttribute("username") != null) {
+            List<Doctor> doctors = doctorRepository.findAll();
+            return ResponseEntity.ok(doctors);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+
+    }
 }

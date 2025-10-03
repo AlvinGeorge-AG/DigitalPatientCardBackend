@@ -161,9 +161,5 @@ public class PatientController {
         return ResponseEntity.ok(patient);
     }
 
-    @PostMapping("/all")
-    public ResponseEntity<?> all(){
-        List<Patient> patients = patientRepository.findAll();
-        return ResponseEntity.ok(patients);
-    }
+
 }
