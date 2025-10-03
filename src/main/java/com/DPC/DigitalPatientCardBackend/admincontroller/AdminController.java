@@ -86,7 +86,7 @@ public class AdminController {
     }
 
     // ===== Delete Doctor =====
-    @DeleteMapping("/admin/doctor/{id}")
+    @DeleteMapping("/doctor/{id}")
     public ResponseEntity<?> deleteDoctor(@PathVariable Long id, HttpSession session) {
         if (session.getAttribute("username") == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
