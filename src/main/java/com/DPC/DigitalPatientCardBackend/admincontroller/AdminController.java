@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -75,6 +76,7 @@ public class AdminController {
     }
 
     // ===== Delete Patient =====
+    @Transactional
     @DeleteMapping("/patient/{id}")
     public ResponseEntity<?> deletePatient(@PathVariable Long id,HttpSession session) {
         if (session.getAttribute("username") == null) {
@@ -93,6 +95,7 @@ public class AdminController {
     }
 
     // ===== Delete Doctor =====
+    @Transactional
     @DeleteMapping("/doctor/{id}")
     public ResponseEntity<?> deleteDoctor(@PathVariable Long id, HttpSession session) {
         if (session.getAttribute("username") == null) {
