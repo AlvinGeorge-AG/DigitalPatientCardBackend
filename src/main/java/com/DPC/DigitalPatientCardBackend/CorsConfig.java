@@ -17,7 +17,7 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:5173",               // local dev
                                 "https://dpcfrontend.vercel.app",   // production frontend
-                                "https://hoppscotch.io"
+                                "https://digitalpatientcard.netlify.app/"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
