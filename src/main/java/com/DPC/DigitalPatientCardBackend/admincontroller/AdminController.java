@@ -86,18 +86,20 @@ public class AdminController {
     }
 
     // ===== Delete Doctor =====
-    @DeleteMapping("/doctor/{id}")
+    @DeleteMapping("/admin/doctor/{id}")
     public ResponseEntity<?> deleteDoctor(@PathVariable Long id, HttpSession session) {
-        if (session.getAttribute("username") != null) {
-            Doctor doctor = doctorRepository.findDoctorById(id);
-            if (doctor != null) {
-                doctorRepository.deleteDoctorByUsername(doctor.getUsername());
-                return ResponseEntity.ok("Doctor deleted successfully");
-            }
+        if (session.getAttribute("username") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+        }
+
+        if (!doctorRepository.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor not found");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
+
+        doctorRepository.deleteDoctorById(id);
+        return ResponseEntity.ok("Doctor deleted successfully");
     }
+
 
     // ===== Verify Doctor =====
     @PostMapping("/verify/doctor/{id}")
