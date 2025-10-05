@@ -20,7 +20,7 @@ public class Disease {
 
     private boolean status = false;
 
-    @Column(nullable=false)
+    @Column(name="verifiedDoctor")
     private String verifiedDoctor;
 
     // Add this field for the relationship
