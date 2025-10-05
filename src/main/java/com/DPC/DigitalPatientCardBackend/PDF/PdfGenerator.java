@@ -15,58 +15,100 @@ public class PdfGenerator {
 
         document.open();
 
-        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
-        Font normal = FontFactory.getFont(FontFactory.HELVETICA, 11);
-        Font tableHeader = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+        // Define fonts and colors
+        BaseColor headerColor = new BaseColor(0, 121, 184); // A nice blue header bar color
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, BaseColor.WHITE);
+        Font sectionTitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.DARK_GRAY);
+        Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 11, BaseColor.BLACK);
+        Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
 
-        // Title
+        // Header Bar with Title
         if (title != null && !title.isEmpty()) {
-            Paragraph p = new Paragraph(title, titleFont);
-            p.setAlignment(Element.ALIGN_CENTER);
-            p.setSpacingAfter(12);
-            document.add(p);
+            PdfPTable headerBar = new PdfPTable(1);
+            headerBar.setWidthPercentage(100);
+            PdfPCell headerCell = new PdfPCell(new Phrase(title, titleFont));
+            headerCell.setBackgroundColor(headerColor);
+            headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            headerCell.setPadding(10f);
+            headerCell.setBorder(Rectangle.NO_BORDER);
+            headerBar.addCell(headerCell);
+            document.add(headerBar);
 
+            document.add(Chunk.NEWLINE);
             LineSeparator ls = new LineSeparator();
             document.add(new Chunk(ls));
         }
 
-        // Paragraphs
+        // Paragraphs with justified alignment and spacing
         if (paragraphs != null) {
             for (String line : paragraphs) {
-                Paragraph p = new Paragraph(line, normal);
-                p.setSpacingBefore(6);
-                p.setSpacingAfter(6);
-                document.add(p);
+                Paragraph paragraph = new Paragraph(line, normalFont);
+                paragraph.setAlignment(Element.ALIGN_JUSTIFIED);
+                paragraph.setSpacingBefore(6);
+                paragraph.setSpacingAfter(6);
+                paragraph.setFirstLineIndent(20);
+                document.add(paragraph);
             }
         }
 
-        // Table
+        // Add some visual spacing before table
         if (tableData != null && !tableData.isEmpty()) {
-            int cols = tableData.get(0).size();
-            PdfPTable table = new PdfPTable(cols);
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+        }
+
+        // Table with alternating row colors and styled header
+        if (tableData != null && !tableData.isEmpty()) {
+            int numCols = tableData.get(0).size();
+            PdfPTable table = new PdfPTable(numCols);
             table.setWidthPercentage(100);
             table.setSpacingBefore(12);
+            table.setHeaderRows(1);
 
-            // Header
+            // Set column widths evenly
+            float[] columnWidths = new float[numCols];
+            for (int i = 0; i < numCols; i++) {
+                columnWidths[i] = 1f;
+            }
+            table.setWidths(columnWidths);
+
+            // Header row with background color and centered text
             List<String> headerRow = tableData.get(0);
-            for (String cell : headerRow) {
-                PdfPCell headerCell = new PdfPCell(new Phrase(cell, tableHeader));
-                headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                headerCell.setPadding(6);
+            for (String header : headerRow) {
+                PdfPCell headerCell = new PdfPCell(new Phrase(header, tableHeaderFont));
+                headerCell.setBackgroundColor(headerColor);
+                headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                headerCell.setPadding(8);
                 table.addCell(headerCell);
             }
 
-            // Data
+            // Data rows with alternating colors
+            BaseColor lightGray = new BaseColor(230, 230, 230);
             for (int i = 1; i < tableData.size(); i++) {
-                for (String cellValue : tableData.get(i)) {
-                    PdfPCell c = new PdfPCell(new Phrase(cellValue == null ? "" : cellValue, normal));
-                    c.setPadding(6);
-                    table.addCell(c);
+                List<String> row = tableData.get(i);
+                BaseColor rowColor = (i % 2 == 0) ? BaseColor.WHITE : lightGray;
+                for (String cellValue : row) {
+                    PdfPCell cell = new PdfPCell(new Phrase(cellValue == null ? "" : cellValue, normalFont));
+                    cell.setBackgroundColor(rowColor);
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell.setPadding(6);
+                    table.addCell(cell);
                 }
             }
-
             document.add(table);
         }
+
+        // Footer line separator
+        document.add(Chunk.NEWLINE);
+        LineSeparator footerLine = new LineSeparator(1f, 80, BaseColor.GRAY, Element.ALIGN_CENTER, -2);
+        document.add(new Chunk(footerLine));
+
+        // Footer text (optional)
+        Font footerFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 9, BaseColor.GRAY);
+        Paragraph footer = new Paragraph("Generated by Digital Patient Card System", footerFont);
+        footer.setAlignment(Element.ALIGN_CENTER);
+        footer.setSpacingBefore(4);
+        document.add(footer);
 
         document.close();
     }

@@ -20,6 +20,9 @@ public class Disease {
 
     private boolean status = false;
 
+    @Column(nullable=false)
+    private String verifiedDoctor;
+
     // Add this field for the relationship
     @ManyToOne
     @JoinColumn(name = "patient_id")
@@ -28,9 +31,10 @@ public class Disease {
 
     public Disease() {}
 
-    public Disease(String diseasename, LocalDate date) {
+    public Disease(String diseasename, LocalDate date,String verifiedDoctor) {
         this.diseasename = diseasename;
         this.date = date;
+        this.verifiedDoctor = verifiedDoctor;
     }
 
     // getters and setters
@@ -76,4 +80,8 @@ public class Disease {
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
+
+    public String getVerifiedDoctor() {return verifiedDoctor;}
+
+    public void setVerifiedDoctor(String verifiedDoctor) {this.verifiedDoctor = verifiedDoctor;}
 }

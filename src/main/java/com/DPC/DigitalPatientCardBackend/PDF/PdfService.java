@@ -30,10 +30,12 @@ public class PdfService {
         // Build lines for PDF
         List<String> lines = List.of(
                 "Patient Name: " + patient.getName(),
+                "Patient Username: " + patient.getUsername(),
                 "Phone Number: " + patient.getPhoneNumber(),
                 "Blood Group: " + patient.getBloodgroup(),
                 "Height: " + patient.getHeight() + " cm",
-                "Weight: " + patient.getWeight() + " kg"
+                "Weight: " + patient.getWeight() + " kg",
+                "Patient ID :"+patient.getId()
         );
 
         // Build diseases table
@@ -44,6 +46,6 @@ public class PdfService {
         }
 
         // Generate PDF
-        PdfGenerator.generatePdf(out, "Patient Report", lines, table);
+        PdfGenerator.generatePdf(out, "Digital Patient Card", lines, table);
     }
 }

@@ -121,7 +121,7 @@ public class PatientController {
 
 
         LocalDate now = LocalDate.now();
-        Disease disease = new Disease(description, now);
+        Disease disease = new Disease(description, now,"");
         //patient.addDisease(disease);  // just add to patient's list
         disease.setPatient(patient); // Set owning side first
         patient.getDiseases().add(disease); // Add to collection

@@ -123,6 +123,7 @@ public class DoctorController {
                             ));
                         }
                         d.setStatus(true);
+                        d.setVerifiedDoctor(doctorRepository.findByUsername(session.getAttribute("username").toString()).getName());
                         patientRepository.save(patient);
                         return ResponseEntity.ok(Map.of(
                                 "message", "Status updated successfully",
