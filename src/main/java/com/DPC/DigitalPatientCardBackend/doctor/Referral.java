@@ -11,8 +11,8 @@ public class Referral {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String patientUsername;
-    private String referringDoctor;
-    private String referredDoctor;
+    private String referringDoctor;//Dr who sent the request
+    private String referredDoctor;//Dr who recieve
     private String reason;
 
     @ManyToOne

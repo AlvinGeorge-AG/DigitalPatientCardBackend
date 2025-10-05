@@ -11,8 +11,8 @@ public class PdfGenerator {
 
     public static void generatePdf(OutputStream out, String title, List<String> paragraphs, List<List<String>> tableData) throws Exception {
         Document document = new Document(PageSize.A4, 36, 36, 54, 36);
-        PdfWriter.getInstance(document, out);
-
+        PdfWriter writer = PdfWriter.getInstance(document, out);
+        writer.setPageEvent(new PdfService.PageBorder());
         document.open();
 
         // Define fonts and colors
