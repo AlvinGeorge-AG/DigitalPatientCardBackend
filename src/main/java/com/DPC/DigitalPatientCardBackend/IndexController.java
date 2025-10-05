@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class IndexController {
     @GetMapping("/")
     public String index() {
-        return "index";
-    }
-    @GetMapping("/getstarted")
-    public String getstarted() {
-        return "getstarted";
+        return "Welcome To Digital Patient Card Backend";
     }
 }
