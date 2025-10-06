@@ -102,7 +102,7 @@ public class PatientController {
 
     //Patient Specific Controllers
     @PostMapping("/adddisease")
-    public ResponseEntity<?> addDisease(@RequestParam String description, HttpSession session) {
+    public ResponseEntity<?> addDisease(@RequestParam String description,@RequestParam String specialization, HttpSession session) {
 
         if (session.getAttribute("username") == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please login first");
@@ -121,8 +121,7 @@ public class PatientController {
 
 
         LocalDate now = LocalDate.now();
-        Disease disease = new Disease(description, now,"");
-        //patient.addDisease(disease);  // just add to patient's list
+        Disease disease = new Disease(description, now,"",specialization);
         disease.setPatient(patient); // Set owning side first
         patient.getDiseases().add(disease); // Add to collection
 
