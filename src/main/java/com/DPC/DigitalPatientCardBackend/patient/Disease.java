@@ -37,6 +37,7 @@ public class Disease {
         this.diseasename = diseasename;
         this.date = date;
         this.verifiedDoctor = verifiedDoctor;
+        this.specialization = specialization;
     }
 
     // getters and setters
