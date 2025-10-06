@@ -163,6 +163,48 @@ public class PatientController {
         return ResponseEntity.ok("Patient updated successfully");
     }
 
+
+    @DeleteMapping("/delete-disease/{id}")
+    public ResponseEntity<?> deleteDisease(HttpSession session, @PathVariable Long id) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please login first");
+        }
+        Patient patient = patientRepository.findByUsername(username);
+        if (patient == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found");
+        }
+        Disease toRemove = null;
+        for (Disease d : patient.getDiseases()) {
+            if (d.getId().equals(id)) {
+                toRemove = d;
+                break;
+            }
+        }
+        if (toRemove == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Disease not found for this patient");
+        }
+        patient.getDiseases().remove(toRemove); // Remove from patient's list
+        toRemove.setPatient(null); // Break owning side (JPA best practice)
+        patientRepository.save(patient); // OrphanRemoval will delete it from DB
+        return ResponseEntity.ok("Disease deleted successfully");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @GetMapping("/dpc")
     public ResponseEntity<?> dpc(HttpSession session){
         String username = (String) session.getAttribute("username");
