@@ -10,8 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
 import java.time.LocalDate;
-import java.util.List;
-
 
 @RestController
 @RequestMapping("/patient")
