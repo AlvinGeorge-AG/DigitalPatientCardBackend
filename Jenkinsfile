@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-    NEXUS_DOCKER_REGISTRY='10.220.136.82:8081'
+    NEXUS_DOCKER_REGISTRY='10.220.136.82:8083'
     IMAGE_NAME='digital-patient-card'
     DB_URL='jdbc:postgresql://ep-proud-math-aisc7pll.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require'
   }
