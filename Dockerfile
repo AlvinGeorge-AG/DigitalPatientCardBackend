@@ -12,7 +12,7 @@
 # EXPOSE 8080
 # ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 # We use a lightweight Java image
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-alpine 
 # Copy the compiled .jar from the target folder into the container
 COPY target/DigitalPatientCardBackend-0.0.1.jar app.jar
 # Run the app
