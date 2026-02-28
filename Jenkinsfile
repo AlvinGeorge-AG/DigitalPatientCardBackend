@@ -38,6 +38,7 @@ pipeline {
     stage('Build Artifact'){
       steps {
         echo 'Building .jar ....'
+        sh './mvn versions:set -DremoveSnapshot'
         sh './mvnw clean package -DskipTests'
       }
     }
