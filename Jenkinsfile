@@ -3,6 +3,7 @@ pipeline {
   environment {
     NEXUS_DOCKER_REGISTRY='192.168.1.10:8081'
     IMAGE_NAME='digital-patient-card'
+    DB_URL='jdbc:postgresql://ep-proud-math-aisc7pll.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require'
   }
   stages {
     stage('Checkout'){
@@ -19,9 +20,9 @@ pipeline {
           [usernamePassword(credentialsId:'neondb' , usernameVariable:'DB_USERNAME' , passwordVariable:'DB_PASSWORD')]
         ){
           sh """
-              echo "DB_PASSWORD=${DB_PASS}" > .env
-              echo "DB_USERNAME=root" >> .env
-              echo "DB_URL=jdbc:mysql://localhost:3306/patient_db" >> .env
+              echo "DB_PASSWORD=${DB_PASSWORD}" > .env
+              echo "DB_USERNAME=${DB_USERNAME}" >> .env
+              echo "DB_URL=${DB_URL}" >> .env
           """
           sh './mvnw clean test'
         }
