@@ -24,6 +24,7 @@ pipeline {
               echo "DB_USERNAME=${DB_USERNAME}" >> .env
               echo "DB_URL=${DB_URL}" >> .env
           """
+          sh 'chmod +x mvnw'
           sh './mvnw clean test'
         }
       }
