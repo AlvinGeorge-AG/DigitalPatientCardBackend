@@ -11,14 +11,14 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                echo 'Downloading Source Code From GitHub...'
+                echo 'Cloning source code...'
                 checkout scm
             }
         }
 
-        stage('Build Artifact') {
+        stage('Build JAR') {
             steps {
-                echo 'Building JAR...'
+                echo 'Building JAR file...'
                 sh '''
                     chmod +x mvnw
                     ./mvnw versions:set -DremoveSnapshot -DgenerateBackupPoms=false
@@ -43,18 +43,13 @@ pipeline {
             }
         }
 
-        stage('Push To ECR') {
+        stage('Push To AWS ECR') {
             steps {
                 echo 'Pushing image to AWS ECR...'
 
                 withCredentials([
                     string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID'),
-                    string(credentialsId: 'ec2-public-ip', variable: 'EC2_PUBLIC_IP'),
-                    usernamePassword(
-                        credentialsId: 'aws-creds',
-                        usernameVariable: 'AWS_ACCESS_KEY_ID',
-                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-                    )
+                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']
                 ]) {
 
                     script {
@@ -77,7 +72,8 @@ pipeline {
             steps {
                 withCredentials([
                     string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID'),
-                    string(credentialsId: 'ec2-public-ip', variable: 'EC2_PUBLIC_IP')
+                    string(credentialsId: 'ec2-public-ip', variable: 'EC2_PUBLIC_IP'),
+                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']
                 ]) {
 
                     sshagent(['ec2-ssh-key']) {
@@ -104,7 +100,7 @@ pipeline {
 
     post {
         success {
-            echo "SUCCESS! Image built, pushed to ECR, and deployed."
+            echo "SUCCESS! Application built, pushed to ECR, and deployed."
         }
         failure {
             echo "FAILED! Check Jenkins console output."
