@@ -17,6 +17,7 @@ pipeline {
     stage('Build Artifact'){
       steps {
         echo 'Building .jar ....'
+        sh 'chmod +x mvnw'
         sh './mvnw versions:set -DremoveSnapshot -DgenerateBackupPoms=false'
         sh './mvnw clean package -DskipTests'
       }
