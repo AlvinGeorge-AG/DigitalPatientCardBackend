@@ -43,30 +43,30 @@ pipeline {
             }
         }
 
-        stage('Push To AWS ECR') {
-                steps {
-                    withCredentials([
-                        string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID'),
-                        [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']
-                    ]) {
-            
-                        script {
-                            env.ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
-                        }
-            
+         stage('Push To AWS ECR') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID'),
+                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']
+                ]) {
+        
+                    script {
+                        env.ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
+        
                         docker.image('amazon/aws-cli:latest').inside('-v /var/run/docker.sock:/var/run/docker.sock') {
-                            sh '''
-                                aws ecr get-login-password --region $AWS_REGION \
-                                | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-            
-                                docker push $ECR_REPO:$BUILD_NUMBER
-                            '''
+                            sh """
+                                aws ecr get-login-password --region ${AWS_REGION} \
+                                | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+        
+                                docker push ${env.ECR_REPO}:${BUILD_NUMBER}
+                            """
                         }
-            
-                        sh 'docker rmi -f $ECR_REPO:$BUILD_NUMBER'
                     }
+        
+                    sh "docker rmi -f ${env.ECR_REPO}:${BUILD_NUMBER}"
                 }
             }
+        }
 
         stage('Deploy To EC2') {
             steps {
