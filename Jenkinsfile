@@ -32,38 +32,38 @@ pipeline {
                 withCredentials([
                     string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID')
                 ]) {
-                    script {
-                        env.ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
-                    }
-
                     sh '''
+                        # Construct the URL securely in Bash
+                        ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
                         docker build -t $ECR_REPO:$BUILD_NUMBER .
                     '''
                 }
             }
         }
 
-         stage('Push To AWS ECR') {
+        stage('Push To AWS ECR') {
             steps {
                 withCredentials([
                     string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID'),
-                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']
+                    aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
+                    sh '''
+                        ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
         
-                    script {
-                        env.ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
+                        # 1. Spin up AWS CLI container for 1 second just to get the password
+                        # 2. Pass our Jenkins AWS credentials into it
+                        # 3. Pipe (|) the output directly into Jenkins' Docker login
+                        docker run --rm \
+                            -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+                            -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+                            amazon/aws-cli:latest \
+                            ecr get-login-password --region $AWS_REGION \
+                        | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
         
-                        docker.image('amazon/aws-cli:latest').inside('-v /var/run/docker.sock:/var/run/docker.sock') {
-                            sh """
-                                aws ecr get-login-password --region ${AWS_REGION} \
-                                | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-        
-                                docker push ${env.ECR_REPO}:${BUILD_NUMBER}
-                            """
-                        }
-                    }
-        
-                    sh "docker rmi -f ${env.ECR_REPO}:${BUILD_NUMBER}"
+                        # Push the image and clean up the local server to save disk space
+                        docker push $ECR_REPO:$BUILD_NUMBER
+                        docker rmi -f $ECR_REPO:$BUILD_NUMBER
+                    '''
                 }
             }
         }
@@ -73,20 +73,25 @@ pipeline {
                 withCredentials([
                     string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID'),
                     string(credentialsId: 'ec2-public-ip', variable: 'EC2_PUBLIC_IP'),
-                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']
+                    aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
-
                     sshagent(['ec2-ssh-key']) {
-
-                        script {
-                            env.ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
-                        }
-
                         sh '''
+                            ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
+
+                            # We SSH into EC2. The double quotes (") allow our Jenkins variables to be injected.
                             ssh -o StrictHostKeyChecking=no ubuntu@$EC2_PUBLIC_IP "
-                                aws ecr get-login-password --region $AWS_REGION \
+                                
+                                # We use the exact same trick on the EC2 server! 
+                                # EC2 temporarily pulls the AWS CLI container to securely log into ECR
+                                sudo docker run --rm \
+                                    -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+                                    -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+                                    amazon/aws-cli:latest \
+                                    ecr get-login-password --region $AWS_REGION \
                                 | sudo docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
+                                # Clean up old app, pull the new one, and deploy
                                 sudo docker rm -f patient-card-app || true
                                 sudo docker pull $ECR_REPO:$BUILD_NUMBER
                                 sudo docker run -d -p 80:8080 --name patient-card-app $ECR_REPO:$BUILD_NUMBER
