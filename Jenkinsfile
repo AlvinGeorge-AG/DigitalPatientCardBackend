@@ -68,22 +68,22 @@ pipeline {
             }
         }
 
+
         stage('Deploy To EC2') {
             steps {
                 withCredentials([
                     string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID'),
                     string(credentialsId: 'ec2-public-ip', variable: 'EC2_PUBLIC_IP'),
+                    string(credentialsId: 'neondb', usernamevariable: 'DB_USERNAME',passwordvariable:'DB_PASSWORD'), // Grab the DB Password securely!
                     aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
                     sshagent(['ec2-ssh-key']) {
                         sh '''
                             ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
 
-                            # We SSH into EC2. The double quotes (") allow our Jenkins variables to be injected.
+                            # We SSH into EC2
                             ssh -o StrictHostKeyChecking=no ubuntu@$EC2_PUBLIC_IP "
                                 
-                                # We use the exact same trick on the EC2 server! 
-                                # EC2 temporarily pulls the AWS CLI container to securely log into ECR
                                 sudo docker run --rm \
                                     -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
                                     -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
@@ -91,16 +91,22 @@ pipeline {
                                     ecr get-login-password --region $AWS_REGION \
                                 | sudo docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-                                # Clean up old app, pull the new one, and deploy
                                 sudo docker rm -f patient-card-app || true
                                 sudo docker pull $ECR_REPO:$BUILD_NUMBER
-                                sudo docker run -d -p 80:8080 --name patient-card-app $ECR_REPO:$BUILD_NUMBER
+                                
+                                # THE FIX: Add the -e flags to inject the variables into the container!
+                                sudo docker run -d -p 80:8080 \\
+                                    -e DB_URL=$DB_URL \\
+                                    -e DB_USERNAME=$DB_USERNAME \\
+                                    -e DB_PASSWORD=$DB_PASSWORD \\
+                                    --name patient-card-app $ECR_REPO:$BUILD_NUMBER
                             "
                         '''
                     }
                 }
             }
         }
+        
     }
 
     post {
