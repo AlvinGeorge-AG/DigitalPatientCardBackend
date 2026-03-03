@@ -74,7 +74,7 @@ pipeline {
                 withCredentials([
                     string(credentialsId: 'aws-account-id', variable: 'AWS_ACCOUNT_ID'),
                     string(credentialsId: 'ec2-public-ip', variable: 'EC2_PUBLIC_IP'),
-                    string(credentialsId: 'neondb', usernamevariable: 'DB_USERNAME',passwordvariable:'DB_PASSWORD'), // Grab the DB Password securely!
+                    usernamePassword(credentialsId: 'neondb', usernameVariable: 'DB_USERNAME',passwordVariable:'DB_PASSWORD'), // Grab the DB Password securely!
                     aws(credentialsId: 'aws-creds', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
                     sshagent(['ec2-ssh-key']) {
