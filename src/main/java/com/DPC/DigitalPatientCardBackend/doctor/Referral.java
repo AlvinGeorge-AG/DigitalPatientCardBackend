@@ -1,9 +1,7 @@
 package com.DPC.DigitalPatientCardBackend.doctor;
-
 import com.DPC.DigitalPatientCardBackend.patient.Patient;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-
 @Entity
 @Table(name = "referral")
 public class Referral {
@@ -28,28 +26,21 @@ public class Referral {
     }
 
     public Referral() {}
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     // Getters & Setters
     public String getPatientUsername() { return patientUsername; }
     public void setPatientUsername(String patientUsername) { this.patientUsername = patientUsername; }
-
     public String getReferringDoctor() { return referringDoctor; }
     public void setReferringDoctor(String referringDoctor) { this.referringDoctor = referringDoctor; }
-
     public String getReferredDoctor() { return referredDoctor; }
     public void setReferredDoctor(String referredDoctor) { this.referredDoctor = referredDoctor; }
-
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
-
     public Doctor getDoctor() { return doctor; }
     public void setDoctor(Doctor doctor) { this.doctor = doctor; }
 }
